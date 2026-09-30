@@ -25,6 +25,9 @@ A statistics dashboard plugin for [Stash](https://stashapp.cc/) that extends the
 
 > Statistics AddOn for extended view of your Stash Stats.
 
+##### Dependencies
+- CommunityScriptsUILibrary
+
 #### Features
 
 - **Overview** – Library-wide hero numbers, recent additions, and top performers
