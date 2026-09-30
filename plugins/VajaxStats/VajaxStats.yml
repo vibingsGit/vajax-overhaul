@@ -1,0 +1,7 @@
+name: Vajax Stats
+description: Vajax Stats AddOn for modifying Stash's Statistics page
+version: 1.1
+url: https://github.com/vibingsGit/vajax-overhaul
+ui:
+  javascript:
+    - VajaxStats.js
