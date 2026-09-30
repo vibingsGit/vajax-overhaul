@@ -1,0 +1,11 @@
+name: Vajax Battles
+description: Vajax Battles AddOn is part of Vajax Overhaul plugins
+version: 1.3
+url: https://github.com/vibingsGit/vajax-overhaul
+ui:
+  javascript:
+    - VajaxBattles.js
+exec:
+  - python
+  - "{pluginDir}/backend/stats_backend.py"
+interface: raw
