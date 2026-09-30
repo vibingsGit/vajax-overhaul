@@ -1,0 +1,8 @@
+name: Vajax Homepage
+description: Vajax Overhaul AddOn plugin that changes how default Stash homepage
+  looks and feels
+version: 1.0
+url: https://github.com/vibingsGit/vajax-overhaul
+ui:
+  javascript:
+    - VajaxHomepage.js
