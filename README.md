@@ -1,6 +1,6 @@
 # Vajax Overhaul
 
-A collection of Stash plugins maintained under a single source. Each plugin is installed independently, allowing users to select only the plugins they need.
+A colelction of Stash plugins for Vajax Overhaul project. This "overhaul" is meant to change most of the already existing functionalities and to add new features. Plugins can work separately so no need to use every plugin if not needed.
 
 ## Available Plugins
 
