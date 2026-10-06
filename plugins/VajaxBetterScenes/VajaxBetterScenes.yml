@@ -1,6 +1,6 @@
 name: Vajax Better Scenes
 description: Improves and extends features inside scene player page
-version: 1.0
+version: 1.1
 ui:
   javascript:
     - VajaxBetterScenes.js
