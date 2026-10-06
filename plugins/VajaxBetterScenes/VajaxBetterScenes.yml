@@ -1,0 +1,10 @@
+name: Vajax Better Scenes
+description: Improves and extends features inside scene player page
+version: 1.0
+ui:
+  javascript:
+    - VajaxBetterScenes.js
+exec:
+  - python3
+  - "{pluginDir}/VajaxBetterScenes.py"
+interface: raw
