@@ -1,6 +1,6 @@
 # Vajax Overhaul
 
-A collection of Stash plugins for the Vajax Overhaul project. This "overhaul" is meant to change most of the already existing functionalities and to add new features. Plugins can work separately — no need to use every plugin if not needed.
+A collection of Stash plugins for the Vajax Overhaul project. This "overhaul" is meant to change most of the already existing functionalities and to add new features. Plugins can work separately - no need to use every plugin if not needed.
 
 ## Plugins at a glance
 
@@ -38,16 +38,19 @@ A full replacement for Stash's built-in scene page. The plugin hides the default
 
 - **Custom scene page** – Replaces Stash's default scene layout entirely with a modern two-column grid: player on the left, details sidepanel on the right
 - **Modern video player** – Built-in `<video>` element with a custom control bar, timeline hover previews, and O-count markers on the progress track
-- **Queue system** – Reads Stash's URL-encoded `qsort`/`qfc` queue so random and filtered queues work out of the box, with Auto Continue, Shuffle Next, Repeat on End, and Shuffle after Repeat behaviors
+- **Two-tier queue system** – A per-tab *Session Queue* that plays before Stash's own URL-derived queue, plus Stash's filtered/random queue; both are merged into a single playback order with cursor-based navigation
 - **O Count tracking** – Records O timestamps in a sidecar JSON file on the server, synced to Stash's native `o_counter` and `o_history`, with an inline timeline editor
-- **Below-player carousels** – Tabbed section with Next on Queue, Recommendations, This Performer (one row per performer), and an interactive O Count Map with hover thumbnails
-- **Modals** – File Info, Markers, Edit (with performers, tags, studios, galleries, groups, URLs, Stash IDs, and custom fields), Queue, History, Settings, For Nerds, and Help
-- **Right-click context menus** – Different menus for the player while playing versus paused, plus a page-wide menu with copy actions, favorite toggles, and bulk favorite operations
+- **Play session tracking** – Accrues real playback time (excluding seeks and pauses), fires a play count at 25% of the video duration, and syncs durations to Stash
+- **Below-player carousels** – Tabbed section with Next On Queue, Recommendations, This Performer (one row per performer), and an interactive O Count Map with hover thumbnails
+- **Modals** – File Info, Markers, Edit (performers, tags, studios, galleries, groups, URLs, Stash IDs, custom fields), Queue, History (per-day grouping + live session), Settings, For Nerds, and Help
+- **Right-click context menus** – Different menus for the player while playing vs. paused, plus page-wide and scene-card menus with copy actions, favorite toggles, and per-queue removal
 - **For Nerds dashboard** – Live graphs for bitrate, stereo audio spectrum, and frame rate/dropped frames, plus detailed playback and codec stats
-- **Fullscreen support** – Works on desktop, Android Chrome, and iOS Safari (with native `webkitEnterFullscreen` fallback)
+- **Fullscreen support** – Persists across scene changes on desktop, Android Chrome, and iOS Safari (with native `webkitEnterFullscreen` fallback)
+- **Hover previews** – Video previews on scene cards after a short hover delay
+- **Performer cards** – Rich demographic and body details; compact 2-column layout with hover-to-expand when a scene has more than four performers
 - **Keyboard shortcuts** – Playback, seeking, volume, O recording, seek-to-percent, and fullscreen
 - **Themeable** – Every color, spacing, shadow, and typography token is exposed as a `--vajax-bs-*` CSS variable that can be overridden from any theme plugin
-- **Layout persistence** – Sidepanel view, queue behaviors, and below-player tab are saved to `localStorage`
+- **Layout persistence** – Sidepanel view, queue behaviors, session queue, and below-player tab are saved to `localStorage` / `sessionStorage`
 
 **Requirements**
 
@@ -130,6 +133,76 @@ A statistics dashboard plugin for [Stash](https://stashapp.cc/) that extends the
 - **Images** – Resolution, size, orientation, ratings, top photographers, and added timeline
 
 Each category tab has **clickable stat cards** that dynamically swap the chart below, plus **latest/oldest** and **top-N** lists with sort toggles.
+
+---
+
+## Patch Notes
+
+### Vajax Better Scenes - v1.2
+
+**Two-tier queue system**
+
+- Added a **Session Queue** - a per-tab, in-memory queue that plays *before* Stash's own URL-derived queue. Cleared automatically when the browser tab closes.
+- Session queue entries support **duplicates** - the same scene can be added multiple times.
+- Queue items from the Session Queue are **play-once**: once played, they are removed from the session.
+- Unified merged playback order: `[Stash up to current] → [session items] → [rest of Stash]`, driven by a cursor that tracks which instance is playing when the same scene ID appears multiple times.
+- Queue modal now renders **two separate panels**: a highlighted Session Queue panel (with its own count and clear button) and a Stash Queue panel.
+- Clear buttons for the two queues are independent - clearing the session queue does not touch the Stash queue, and vice versa.
+
+**Queue behaviors**
+
+- **Autoplay on Queue** - start playback automatically when the scene advances via queue, without affecting manual navigation.
+
+**Play session tracking**
+
+- Playback time accrues only while the video is genuinely playing - seeks, scrubs, and pauses contribute nothing.
+- **Play count fires mid-playback** the moment 25% of the video duration has been watched.
+- Play **duration** streams to Stash every 10 media-seconds and on pause / end / unmount.
+- Whole-video loop and A/B loop both end the session cleanly and start fresh, so each loop iteration counts as a new session.
+- The History modal now shows a **This Session** panel with a live progress bar toward the 25% threshold and the current session's duration.
+
+**History modal**
+
+- Play history is now grouped by calendar day. Each row shows the number of plays for that day and an estimated duration.
+- Expanding a day reveals the individual play times as plain text joined by ` – `, keeping the list compact even with many entries per day.
+- New aggregate rows: **Total play count**, **Total play duration** (with a live badge when a session is in progress), and **Active days**.
+
+**Scene cards**
+
+- Added **hover previews** - a short hover delay swaps the thumbnail for the scene's preview video.
+- Native browser tooltips removed in favour of the preview overlay.
+- Right-click menu now includes **Open in New Tab**, **Add Next to Queue**, **Add Last to Queue**, and **Remove from Session / Stash Queue** (only shown when the scene is actually in the corresponding queue).
+- Middle-click and Ctrl/Cmd-click open in a new tab natively.
+
+**Fullscreen**
+
+- Fullscreen **persists across scene changes** during queue-driven navigation.
+- Automatic fullscreen re-entry if the browser exits fullscreen on a source change.
+
+**Player controls**
+
+- Auto-hide after **1 second of inactivity** - both the control bar and the cursor disappear.
+- Click or move to reveal again.
+
+**Context menus**
+
+- Different menu when playing vs. paused:
+  - **Playing** → Pause, Record O, Queue, Settings, For Nerds, Help, copy actions, Fullscreen.
+  - **Paused** → same as above plus page-level actions (Play, Copy scene URL/ID/title/path, Favorite Performer submenu, Edit scene, Mark as organized, Open screenshot).
+- Submenu support for the **Favorite Performer** action when a scene has multiple performers, including bulk *Favorite all* / *Unfavorite all*.
+
+
+**Video player settings**
+
+- New **Autoplay on open** toggle in Player Settings - plays the video as soon as the scene loads.
+
+**Under the hood**
+
+- SPA navigation via `history.pushState` for queue-driven scene changes, preserving the video element, cursor position, and fullscreen state.
+- Stale `onRefresh` calls from the previous scene are discarded to avoid clobbering the new scene's state.
+- React ErrorBoundary added around the scene page so backend errors never blank the UI.
+
+---
 
 ## Installation
 
